@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" content={{url_for( 'static' , filename='main_img.jpg' )}}>
+    <link rel="icon" type="image/ico" href={{url_for( 'static' , filename='favicon.ico' )}}>
+    <link rel="stylesheet" href={{url_for( 'static' , filename='reset.css' , version=GLOBAL_VERSION )}}>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href={{url_for( 'static' , filename='index.css' , version=GLOBAL_VERSION )}}>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;400;700&amp;family=Noto+Serif+TC:wght@200;400;700&amp;display=swap"
+        rel="stylesheet" />
+    {% for source in categories[category] %}
+    <link rel="prefetch" href="{{url_for('static', filename='source/thumb/'+source)}}" />
+    {% endfor %}
+    <title>{{GLOBAL_TITLE}}</title>
+</head>
+
+<body>
+    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog">
+        <div class="vertical-alignment-helper">
+            <div class="modal-dialog vertical-align-center" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">關於</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <p>
+                            開源程式碼: <a href="" target="_blank">github.com/SeanGau</a><br> 
+                            共筆: <a href="https://g0v.hackmd.io/@chewei/joinplus/" target="_blank">g0v.hackmd.io/@chewei/joinplus/</a><br> 
+                            素材來自於: <a href="https://github.com/Monaludao/unlimitedcities" target="_blank">unlimitedcities</a><br> 
+                            license: GNU GPL V3
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="modal fade" id="submitModal" tabindex="-1" role="dialog">
+        <div class="vertical-alignment-helper">
+            <div class="modal-dialog vertical-align-center" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">下載圖片</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="download-form">
+                            <div class="mb-3">
+                                <label for="InputName" class="form-label">姓名 Name</label>
+                                <input type="text" class="form-control" id="InputName">
+                            </div>
+                            <div class="mb-3">
+                                <label for="InputEmail" class="form-label">作品名稱 Title</label>
+                                <input type="text" class="form-control" id="InputTitle">
+                            </div>
+                            <div class="form-text">
+                                <p><b>※發佈即同意授權拼貼成果與 Joinplus 團隊做非營利使用※</b></p>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">送出</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="bgModal" tabindex="-1" role="dialog">
+        <div class="vertical-alignment-helper">
+            <div class="modal-dialog vertical-align-center" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">背景樣式 Background type</h5>
+                        <!--input type="color" id="bgcolor" title="background color" name="bgcolor" value="#DDDDDD" /-->
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body container" style="max-height: 50vh; overflow-y: auto; overflow-x: hidden;">
+                        <div class="row g-2">
+                            {% for bg in bgs %} {% set bg_url = url_for('static',
+                            filename='source/bg/'+bg['filename'])%} {% set thumb_url = url_for('static',
+                            filename='source/bg/thumb/'+bg['filename'])%}
+                            <div class="col-6">
+                                <a href="#">
+                                    <div class="bg-img" style="background-image: url({{thumb_url}});"
+                                        data-src={{bg_url}}>
+                                    </div>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex flex-column h-100">
+        <div id="header">
+            {{GLOBAL_TITLE}}
+            <a role="button" class="btn btn-outline-light ms-4" title="about" data-bs-toggle="modal"
+                data-bs-target="#aboutModal">關於</a>
+            <a role="button" class="btn btn-outline-light ms-1" title="gallery" href="works">瀏覽</a>
+        </div>
+        <div class="flex-grow-1 d-flex p-3">
+            <div id="collage-source">
+                <div id="collage-tools">
+                    <button class="btn btn-primary btn-lg" type="button" title="download" data-bs-toggle="modal"
+                        data-bs-target="#submitModal"><i class="fas fa-file-download"></i></button>
+                    <div class="moveable-buttons d-none">
+                        <button class="btn btn-danger mt-1 target-control" type="button" title="delete｜刪除 (Del)"
+                            name="collage-remove"><i class="far fa-trash-alt"></i></button>
+                        <button class="btn btn-secondary mt-1 target-control" type="button" title="Bring Top｜至頂"
+                            name="collage-to-top"><i class="fas fa-angle-double-up"></i></button>
+                        <button class="btn btn-secondary mt-1 target-control" type="button"
+                            title="Bring Forward｜前移一層 (PgUp)" name="collage-up"><i
+                                class="fas fa-chevron-up"></i></button>
+                        <button class="btn btn-secondary mt-1 target-control" type="button"
+                            title="Send Backward｜後移一層 (PgDn)" name="collage-down"><i
+                                class="fas fa-chevron-down"></i></button>
+                        <button class="btn btn-secondary mt-1 target-control" type="button" title="Send Bottom｜至底"
+                            name="collage-to-bottom"><i class="fas fa-angle-double-down"></i></button>
+                        <button class="btn btn-secondary mt-1 target-control" type="button"
+                            title="Flip Horizontal｜水平翻轉 (x)" name="collage-flip"><i
+                                class="fas fa-exchange-alt"></i></button>
+                    </div>
+                    <div class="source-controls">
+                        <button class="btn btn-warning mr-1" type="button" title="add" name="collage-add"><i
+                                class="fas fa-plus"></i></button>
+                        <button class="btn btn-danger mr-1" type="button" title="clear" name="collage-clear"><i
+                                class="fas fa-undo-alt"></i></button>
+                        <button class="btn btn-secondary mr-1" type="button" title="background" data-bs-toggle="modal"
+                            data-bs-target="#bgModal"><i class="fas fa-mountain"></i></button>
+                    </div>
+                </div>
+                <div id="source-box" class="container">
+                    <div class="row sticky-top">
+                        <div class="col">
+                            <ul class="nav nav-pills" id="source-tab" role="tablist">
+                                {% for category in categories %}
+                                <li class="nav-item" role="presentation">
+                                    {% if loop.index == 1 %}
+                                    <button class="nav-link text-light active" id="pills-category{{loop.index}}-tab"
+                                        data-bs-toggle="pill" data-bs-target="#pills-category{{loop.index}}"
+                                        type="button" role="tab" aria-controls="pills-category{{loop.index}}"
+                                        aria-selected="true">
+                                        {% else %}
+                                        <button class="nav-link text-light" id="pills-category{{loop.index}}-tab"
+                                            data-bs-toggle="pill" data-bs-target="#pills-category{{loop.index}}"
+                                            type="button" role="tab" aria-controls="pills-category{{loop.index}}"
+                                            aria-selected="false">
+                                            {% endif %}
+                                            {{category}}
+                                        </button>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="tab-content pb-2" id="pills-tabContent">
+                            {% for category in categories %}
+                            {% if loop.index == 1 %}
+                            <div class="tab-pane fade show active" id="pills-category{{loop.index}}" role="tabpanel"
+                                aria-labelledby="pills-category{{loop.index}}-tab">
+                                {% else %}
+                                <div class="tab-pane fade" id="pills-category{{loop.index}}" role="tabpanel"
+                                    aria-labelledby="pills-category{{loop.index}}-tab">
+                                    {% endif %}
+                                    <div class="row g-2">
+                                        {% for source in categories[category] %} {% set source_url = url_for('static',
+                                        filename='source/'+source)%} {% set thumb_url = url_for('static',
+                                        filename='source/thumb/'+source)%}
+                                        <div class="col-md-4">
+                                            <a href="#">
+                                                <div class="source-img" style="background-image: url({{thumb_url}});"
+                                                    data-src={{source_url}}>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="collage-box">
+                    <div id="collage-background">
+                        <img id="image-background"></img>
+                    </div>
+                    <div id="collage-area"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading" class="d-none">
+            <img src="{{url_for('static', filename='loading.svg' )}}" alt="">
+        </div>
+        <script src="https://kit.fontawesome.com/cc94f52acd.js" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"             crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
+        <script src="//daybrush.com/moveable/release/latest/dist/moveable.min.js"></script>
+        <script src={{url_for( 'static' , filename='html2canvas.min.js' )}}></script>
+        <script src={{url_for( 'static' , filename='index.js' , version=GLOBAL_VERSION )}}></script>
+</body>

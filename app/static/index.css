@@ -1,0 +1,226 @@
+html {
+    height: 100%;
+}
+body {
+    font-family: 'Noto Sans TC', sans-serif;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: #333;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    font-family: 'Noto Serif TC', serif;
+}
+
+p {
+    text-align: justify;
+    text-justify: inter-word;
+    word-break: break-all;
+}
+
+#loading {
+    z-index: 99999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#loading img {
+    position: absolute;
+    left: 45%;
+    top: 45%;
+    width: 10%;
+    height: 10%;
+}
+
+#header {
+    color: white;
+    height: 3em;
+    line-height: 3em;
+    padding-left: 3em;
+    background-image: url("./banner.jpg");
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+#collage-source {
+    z-index: 999;
+    height: calc(100% - 4em);
+    width: 30vw;
+    position: fixed;
+    left: -30vw;
+    background-color: #666;
+    transition: .3s;
+    border: 0.5em solid #222;
+}
+
+#collage-source.show {
+    left: 0;
+}
+
+#source-box {
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+#source-box .sticky-top {
+    background-color: #666;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #AAA;
+}
+
+#source-box h4 {
+    color: white;
+    font-weight: bold;
+    border-bottom: 1px solid;    
+    padding-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+#source-box .source-img {
+    background-color: white;
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-top: 100%;
+    filter: opacity(0.8);
+    transition: .3s;
+}
+
+#source-box .source-img:hover {
+    filter: opacity(1);
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    background-color: #6c757d;
+}
+
+#collage-tools {
+    position: absolute;
+    width: 18em;
+    bottom: 0.5em;
+    left: 31vw;
+}
+
+button[title="download"] {
+    position: fixed;
+    right: 1em;
+    bottom: 1em;
+}
+
+#bgcolor {
+    display: inline-block;
+    height: 2.5em;
+    vertical-align: middle;
+    margin-left: 1em;
+}
+
+#collage-box {
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    margin: auto;
+}
+
+#collage-area {
+    display: flex;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+#collage-background {
+    background-color: #FFF;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+#image-background {
+    background-size: cover;
+    background-image: url("source/bg/b1.jpg");
+    opacity: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.target {
+    position: absolute;
+    width: 200px;
+}
+
+.target img {
+    pointer-events: none;
+    user-select: none;
+    height: 100%;
+    width: 100%;
+}
+
+.moveable-buttons {
+    padding-bottom: 0.5em;
+}
+
+.target-control {
+    width: 2.5em;
+    height: 2.5em;
+}
+
+#bgModal .bg-img {
+    background-color: white;
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding-top: 100%;
+    filter: opacity(0.8);
+    transition: .3s;
+}
+
+.vertical-alignment-helper {
+    display: table;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+    /* This makes sure that we can still click outside of the modal to close it */
+}
+
+.vertical-align-center {
+    /* To center vertically */
+    display: table-cell;
+    vertical-align: middle;
+    pointer-events: none;
+}
+
+.modal-content {
+    /* Bootstrap sets the size of the modal in the modal-dialog class, we need to inherit it */
+    width: inherit;
+    max-width: inherit;
+    /* For Bootstrap 4 - to avoid the modal window stretching full width */
+    height: inherit;
+    /* To center horizontally */
+    margin: 0 auto;
+    pointer-events: all;
+}
+
+@media (max-width: 767px) {
+    #collage-source {
+        width: 50vw;
+        left: -50vw;
+    }
+    #collage-tools {
+        left: 51vw;
+    }
+}
