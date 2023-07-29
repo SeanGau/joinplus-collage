@@ -10,15 +10,14 @@ app.jinja_env.globals['GLOBAL_VERSION'] = datetime.now().timestamp()
 
 locale.setlocale(locale.LC_ALL, 'zh_TW.UTF-8')
 print('sqlite:', sqlite3.sqlite_version)
-
+print('regenerating thumbnails....')
 for (dirpath, dirnames, filenames) in os.walk("./app/static/source/bg"):
     for filename in filenames:
-        #read the image
-        if not os.path.exists("./app/static/source/bg/thumb/"+filename):            
-            im = Image.open("./app/static/source/bg/"+filename)
-            im.thumbnail((1000,500))
-            nim = im.crop((250,0,750,500))
-            nim.save("./app/static/source/bg/thumb/"+filename)
+        #read the image      
+        im = Image.open("./app/static/source/bg/"+filename)
+        im.thumbnail((1000,500))
+        nim = im.crop((250,0,750,500))
+        nim.save("./app/static/source/bg/thumb/"+filename)
     break
 
 for (dirpath, dirnames, filenames) in os.walk("./app/static/source"):
@@ -26,10 +25,9 @@ for (dirpath, dirnames, filenames) in os.walk("./app/static/source"):
         if '.yml' in filename:
             continue
         #read the image
-        if not os.path.exists("./app/static/source/thumb/"+filename):
-            im = Image.open("./app/static/source/"+filename)
-            im.thumbnail((150,150))
-            im.save("./app/static/source/thumb/"+filename)
+        im = Image.open("./app/static/source/"+filename)
+        im.thumbnail((150,150))
+        im.save("./app/static/source/thumb/"+filename)
     break
     
 def get_db():
