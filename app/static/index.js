@@ -183,9 +183,9 @@ $("#download-form").on("submit", function (e) {
         var date = new Date();
         var time = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay() + 1}`;
 
-        //link.download = `seedingfuture_${time}.png`;
-        //link.href = img;
-        //link.click();
+        link.download = `seedingfuture_${time}.png`;
+        link.href = img;
+        link.click();
         $("#loading").addClass("d-none");
         $.ajax({
             type: "POST",
