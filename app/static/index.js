@@ -117,7 +117,7 @@ move.on("renderEnd", ({ target }) => {
     $(target).css("transform", $(target).css("transform"));
 });
 
-$("#collage-area").on("click", function () {
+$("#collage-area").on("click", function (e) {
     move.target = null;
     $(".target.selected").removeClass("selected");
     $("#collage-tools .moveable-buttons").addClass("d-none");
@@ -171,6 +171,65 @@ $("#collage-tools .source-controls button[name='collage-add']").on("click", func
     $("#collage-source").toggleClass("show");
 });
 
+const canvas = document.getElementById("bg-canvas");
+const ctx = canvas.getContext("2d");
+let currentRegion = null;
+let currentControlPoints = [];
+
+$("#bg-canvas").on("click", function (e) {
+    if (currentRegion) {
+        console.log(e.offsetX, e.offsetY);
+        if (currentControlPoints.length > 0) {
+            currentRegion.lineTo(e.offsetX, e.offsetY);
+        } else {
+            currentRegion.moveTo(e.offsetX, e.offsetY);
+        }
+        currentControlPoints.push({
+            x: e.offsetX,
+            y: e.offsetY
+        })
+        let tempRegion = new Path2D();
+        tempRegion.arc(e.offsetX, e.offsetY, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = "#44AAFF";
+        ctx.fill(tempRegion);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#44AAFF";
+        ctx.stroke(currentRegion);
+    }
+})
+
+$("#collage-tools .source-controls #fill-texture").on("click", function () {
+    if (currentRegion) {
+        console.log("fill");
+        currentRegion.closePath();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        currentRegion = null;
+        $("#bg-canvas").removeClass("drawing");
+
+        let points = "";
+        currentControlPoints.forEach(el => {
+            points += `${el.x},${el.y} `
+        });
+        let ms = Date.now();
+        let templateDom = $(`
+        <div class="target" id="target-${ms}" style="left:0;top:0;width:100%;">
+            <svg width=${canvas.width} height=${canvas.height}>
+            <polyline points="${points}"
+            fill="black" />
+            </svg>
+        </div>
+        `);
+        layer_array.unshift("target-" + ms);
+        $("#collage-area").prepend(templateDom);
+
+    } else {
+        console.log("start drawing");
+        $("#bg-canvas").addClass("drawing");
+        currentRegion = new Path2D();
+        currentControlPoints = [];
+    }
+});
+
 $("#download-form").on("submit", function (e) {
     e.preventDefault();
     $("#loading").removeClass("d-none");
@@ -212,10 +271,10 @@ $("#collage-tools .source-controls button[name='collage-clear']").on("click", fu
 $("#source-box .source-img").on("click", function () {
     let ms = Date.now();
     let templateDom = $(`
-  <div class="target" id="target-${ms}">
-    <img src="">
-  </div>
-  `);
+    <div class="target" id="target-${ms}">
+        <img src="">
+    </div>
+    `);
     $("img", templateDom).attr("src", $(this).data("src"));
     $("#collage-area").append(templateDom);
     layer_array.push("target-" + ms);
@@ -247,6 +306,9 @@ $(window).resize(function () {
             $("#collage-box").height(c_w * 16 / 9);
         }
     }
+
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
 });
 
 $(document).on("click", ".moveable-buttons button[name='collage-remove']", function () {
