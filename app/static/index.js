@@ -207,15 +207,25 @@ $("#collage-tools .source-controls #fill-texture").on("click", function () {
         $("#bg-canvas").removeClass("drawing");
 
         let points = "";
+        let minX = 9999;
+        let maxX = 0;
+        let minY = 9999;
+        let maxY = 0;
         currentControlPoints.forEach(el => {
-            points += `${el.x},${el.y} `
+            points += `${el.x},${el.y} `;
+            minX = Math.min(minX, el.x);
+            maxX = Math.max(maxX, el.x);
+            minY = Math.min(minY, el.y);
+            maxY = Math.max(maxY, el.y);
         });
         let ms = Date.now();
         let templateDom = $(`
-        <div class="target" id="target-${ms}" style="left:0;top:0;width:100%;">
-            <svg width=${canvas.width} height=${canvas.height}>
-            <polyline points="${points}"
-            fill="black" />
+        <div class="target" id="target-${ms}" style="left:${minX}px;top:${minY}px;width:${maxX-minX}px;height:${maxY-minY}px;">
+            <svg viewBox="${minX} ${minY} ${maxX-minX} ${maxY-minY}" width="100%" height="100%" preserveAspectRatio="none">
+                <mask id="mask">
+                    <polygon points="${points}" fill="white" />
+                </mask>
+                <image href="/static/source/texture/grass-crop.jpg" mask="url(#mask)" x="${minX}" y="${minY}" width="100%" height="100%" preserveAspectRatio="none" />
             </svg>
         </div>
         `);
