@@ -20,6 +20,15 @@ for (dirpath, dirnames, filenames) in os.walk("./app/static/source/bg"):
         nim.save("./app/static/source/bg/thumb/"+filename)
     break
 
+for (dirpath, dirnames, filenames) in os.walk("./app/static/source/texture"):
+    for filename in filenames:
+        #read the image      
+        im = Image.open("./app/static/source/texture/"+filename)
+        im.thumbnail((1000,500))
+        nim = im.crop((250,0,750,500))
+        nim.save("./app/static/source/texture/thumb/"+filename)
+    break
+
 for (dirpath, dirnames, filenames) in os.walk("./app/static/source"):
     for filename in filenames:
         if '.yml' in filename:
@@ -50,6 +59,7 @@ def init_db():
 def index():    
     source_img = []
     bg_img = []
+    texture_img = []
     for (dirpath, dirnames, filenames) in os.walk("./app/static/source/bg"):
         for filename in filenames:
             #read the image
@@ -65,6 +75,21 @@ def index():
             }
             bg_img.append(_dict)
         break
+    for (dirpath, dirnames, filenames) in os.walk("./app/static/source/texture"):
+        for filename in filenames:
+            #read the image
+            if not os.path.exists("./app/static/source/texture/thumb/"+filename):            
+                im = Image.open("./app/static/source/texture/"+filename)
+                im.thumbnail((1000,500))
+                nim = im.crop((250,0,750,500))
+                nim.save("./app/static/source/texture/thumb/"+filename)
+
+            _dict = {
+                "filename": filename,
+                "hashed": hashlib.sha1(filename.encode()).hexdigest() 
+            }
+            texture_img.append(_dict)
+        break
     for (dirpath, dirnames, filenames) in os.walk("./app/static/source"):
         for filename in filenames:
             if '.yml' in filename:
@@ -74,7 +99,6 @@ def index():
                 im = Image.open("./app/static/source/"+filename)
                 im.thumbnail((150,150))
                 im.save("./app/static/source/thumb/"+filename)
-                #        _dict = {                "filename": filename,                "hashed": hashlib.sha1(filename.encode()).hexdigest()             }
             source_img.append(filename)
         break
     
@@ -92,7 +116,7 @@ def index():
             source_img.remove(img)
     _category_data['未分類 Uncategorized'] = source_img
     print(_category_data)
-    return flask.render_template('index.html', bgs = bg_img, categories = _category_data)
+    return flask.render_template('index.html', bgs = bg_img, textures = texture_img, categories = _category_data)
 
 @app.route('/function/submit', methods = ['POST'])
 def submit():

@@ -196,12 +196,12 @@ button[title="download"] {
     height: 2.5em;
 }
 
-#bgModal .bg-img {
+#bgModal .bg-img, #txModal .tx-img {
     background-color: white;
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;
-    padding-top: 100%;
+    padding-top: 77%;
     filter: opacity(0.8);
     transition: .3s;
 }

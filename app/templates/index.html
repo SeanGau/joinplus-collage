@@ -98,6 +98,34 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="txModal" tabindex="-1" role="dialog">
+        <div class="vertical-alignment-helper">
+            <div class="modal-dialog vertical-align-center" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">填充樣式 Texture</h5>
+                        <!--input type="color" id="bgcolor" title="background color" name="bgcolor" value="#DDDDDD" /-->
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body container" style="max-height: 50vh; overflow-y: auto; overflow-x: hidden;">
+                        <div class="row g-2">
+                            {% for tx in textures %} {% set tx_url = url_for('static',
+                            filename='source/texture/'+tx['filename'])%} {% set thumb_url = url_for('static',
+                            filename='source/texture/thumb/'+tx['filename'])%}
+                            <div class="col-6">
+                                <a href="#">
+                                    <div class="tx-img" style="background-image: url({{thumb_url}});"
+                                        data-src={{tx_url}}>
+                                    </div>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="d-flex flex-column h-100">
         <div id="header">
             {{GLOBAL_TITLE}}
@@ -134,7 +162,7 @@
                                 class="fas fa-undo-alt"></i></button>
                         <button class="btn btn-secondary mr-1" type="button" title="background" data-bs-toggle="modal"
                             data-bs-target="#bgModal"><i class="fas fa-mountain"></i></button>
-                        <button class="btn btn-primary mr-1" type="button" title="fill with texture" id="fill-texture"><i class="fas fa-draw-polygon"></i></button>
+                        <button class="btn btn-primary mr-1" type="button" title="texture" id="tx-fill"><i class="fas fa-draw-polygon"></i></button>
                     </div>
                 </div>
                 <div id="source-box" class="container">

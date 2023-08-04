@@ -173,8 +173,46 @@ $("#collage-tools .source-controls button[name='collage-add']").on("click", func
 
 const canvas = document.getElementById("bg-canvas");
 const ctx = canvas.getContext("2d");
+const txModal = new bootstrap.Modal(document.getElementById('txModal'))
 let currentRegion = null;
 let currentControlPoints = [];
+
+$("#tx-fill").on("click", function(e) {
+    if (!currentRegion) {
+        txModal.show();
+    } else {
+        console.log("fill");
+        currentRegion.closePath();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let points = "";
+        let minX = 9999;
+        let maxX = 0;
+        let minY = 9999;
+        let maxY = 0;
+        currentControlPoints.forEach(el => {
+            points += `${el.x},${el.y} `;
+            minX = Math.min(minX, el.x);
+            maxX = Math.max(maxX, el.x);
+            minY = Math.min(minY, el.y);
+            maxY = Math.max(maxY, el.y);
+        });
+        let ms = Date.now();
+        let templateDom = $(`
+        <div class="target" id="target-${ms}" style="left:${minX}px;top:${minY}px;width:${maxX-minX}px;height:${maxY-minY}px;">
+            <svg viewBox="${minX} ${minY} ${maxX-minX} ${maxY-minY}" width="100%" height="100%" preserveAspectRatio="none">
+                <mask id="mask-${ms}">
+                    <polygon points="${points}" fill="white" />
+                </mask>
+                <image href="${currentRegion.fillsrc}" mask="url(#mask-${ms})" x="${minX}" y="${minY}" width="100%" height="100%" preserveAspectRatio="none" />
+            </svg>
+        </div>
+        `);
+        layer_array.unshift("target-" + ms);
+        $("#collage-area").prepend(templateDom);
+        currentRegion = null;
+        $("#bg-canvas").removeClass("drawing");
+    }
+})
 
 $("#bg-canvas").on("click", function (e) {
     if (currentRegion) {
@@ -198,53 +236,19 @@ $("#bg-canvas").on("click", function (e) {
     }
 })
 
-$("#collage-tools .source-controls #fill-texture").on("click", function () {
-    if (currentRegion) {
-        console.log("fill");
-        currentRegion.closePath();
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        currentRegion = null;
-        $("#bg-canvas").removeClass("drawing");
-
-        let points = "";
-        let minX = 9999;
-        let maxX = 0;
-        let minY = 9999;
-        let maxY = 0;
-        currentControlPoints.forEach(el => {
-            points += `${el.x},${el.y} `;
-            minX = Math.min(minX, el.x);
-            maxX = Math.max(maxX, el.x);
-            minY = Math.min(minY, el.y);
-            maxY = Math.max(maxY, el.y);
-        });
-        let ms = Date.now();
-        let templateDom = $(`
-        <div class="target" id="target-${ms}" style="left:${minX}px;top:${minY}px;width:${maxX-minX}px;height:${maxY-minY}px;">
-            <svg viewBox="${minX} ${minY} ${maxX-minX} ${maxY-minY}" width="100%" height="100%" preserveAspectRatio="none">
-                <mask id="mask">
-                    <polygon points="${points}" fill="white" />
-                </mask>
-                <image href="/static/source/texture/grass-crop.jpg" mask="url(#mask)" x="${minX}" y="${minY}" width="100%" height="100%" preserveAspectRatio="none" />
-            </svg>
-        </div>
-        `);
-        layer_array.unshift("target-" + ms);
-        $("#collage-area").prepend(templateDom);
-
-    } else {
-        console.log("start drawing");
-        $("#bg-canvas").addClass("drawing");
-        currentRegion = new Path2D();
-        currentControlPoints = [];
-    }
+$("#txModal .tx-img").on("click", function () {
+    txModal.hide();
+    console.log("start drawing");
+    $("#bg-canvas").addClass("drawing");
+    currentRegion = new Path2D();
+    currentRegion.fillsrc = $(this).data("src");
+    currentControlPoints = [];
 });
 
 $("#download-form").on("submit", function (e) {
     e.preventDefault();
     $("#loading").removeClass("d-none");
 
-    $("#image-background").css({ "opacity": 0.4 });
     let export_data = saveData();
     html2canvas(document.body.querySelector("#collage-box")).then(function (canvas) {
         var img = canvas.toDataURL("image/png");
@@ -252,7 +256,7 @@ $("#download-form").on("submit", function (e) {
         var date = new Date();
         var time = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay() + 1}`;
 
-        link.download = `seedingfuture_${time}.png`;
+        link.download = `_${time}.png`;
         link.href = img;
         link.click();
         $("#loading").addClass("d-none");
