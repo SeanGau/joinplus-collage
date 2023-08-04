@@ -203,7 +203,7 @@ $("#tx-fill").on("click", function(e) {
                 <mask id="mask-${ms}">
                     <polygon points="${points}" fill="white" />
                 </mask>
-                <image href="${currentRegion.fillsrc}" mask="url(#mask-${ms})" x="${minX}" y="${minY}" width="100%" height="100%" preserveAspectRatio="none" />
+                <image href="${currentRegion.fillsrc}" mask="url(#mask-${ms})" x="0" y="0" width="${canvas.width}" height="${canvas.height}" preserveAspectRatio="none" />
             </svg>
         </div>
         `);
